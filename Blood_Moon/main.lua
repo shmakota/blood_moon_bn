@@ -80,8 +80,8 @@ local mod = game.mod_runtime[game.current_mod]
 
 local gettext = locale.gettext
 local DEFAULT_INTERVAL_DAYS = 7
-local DEFAULT_MULTIPLIER = 3
-local DEFAULT_HORDE_SIGNAL_POWER = 1
+local DEFAULT_MULTIPLIER = 10
+local DEFAULT_HORDE_SIGNAL_POWER = 10
 local DEFAULT_HORDE_DAYS_PER_SIGNAL_GROWTH = 4
 local DEFAULT_HORDE_MAX_SIGNAL_GROWTH = 3
 local DEFAULT_SPAWN_SIGNAL_POWER = 1
@@ -822,60 +822,60 @@ mod.configure_interval = function()
     menu:add_w_desc(
       1,
       string.format(gettext("Interval: %d days"), mod.sanitize_interval(storage.interval_days)),
-      gettext("How many days pass between Blood Moon nights.")
+      gettext("How often a Blood Moon happens.  7 means one Blood Moon every 7 days.")
     )
     menu:add_w_desc(
       2,
       string.format(gettext("Multiplier: %dx"), mod.sanitize_multiplier(storage.multiplier)),
-      gettext("Total horde tick multiplier during Blood Moon nights.")
+      gettext("How many extra accelerated horde updates run during a Blood Moon.  Higher values make hordes react faster.")
     )
     menu:add_w_desc(
       3,
       string.format(
-        gettext("Horde signal power: %d"),
+        gettext("Horde signal strength: %d"),
         mod.sanitize_signal_power(storage.horde_signal_power)
       ),
-      gettext("Base signal power used to pull hordes toward the player.")
+      gettext("Base attraction strength used to pull overmap hordes toward you during a Blood Moon.")
     )
     menu:add_w_desc(
       4,
       string.format(
-        gettext("Horde days/signal growth: %d"),
+        gettext("Horde growth days: %d"),
         mod.sanitize_days_per_signal_growth(storage.horde_days_per_signal_growth)
       ),
-      gettext("How many days must pass for Blood Moon signal power to increase by 1.")
+      gettext("How many days must pass before horde signal strength increases by 1.")
     )
     menu:add_w_desc(
       5,
       string.format(
-        gettext("Horde max signal growth: %d"),
+        gettext("Horde max growth: %d"),
         mod.sanitize_max_signal_growth(storage.horde_max_signal_growth)
       ),
-      gettext("Maximum total signal power added from time-based growth.")
+      gettext("Maximum bonus that can be added to horde signal strength from time-based growth.")
     )
     menu:add_w_desc(
       6,
       string.format(
-        gettext("Spawn signal power: %d"),
+        gettext("Spawn signal strength: %d"),
         mod.sanitize_signal_power(storage.spawn_signal_power)
       ),
-      gettext("Base signal power used only for spawned horde population scaling.")
+      gettext("Base strength used only to scale the size of newly spawned hordes.  It does not affect horde attraction.")
     )
     menu:add_w_desc(
       7,
       string.format(
-        gettext("Spawn days/signal growth: %d"),
+        gettext("Spawn growth days: %d"),
         mod.sanitize_days_per_signal_growth(storage.spawn_days_per_signal_growth)
       ),
-      gettext("How many days must pass for spawned horde population scaling to gain +1 signal power.")
+      gettext("How many days must pass before spawned horde size scaling gains +1 signal strength.")
     )
     menu:add_w_desc(
       8,
       string.format(
-        gettext("Spawn max signal growth: %d"),
+        gettext("Spawn max growth: %d"),
         mod.sanitize_max_signal_growth(storage.spawn_max_signal_growth)
       ),
-      gettext("Maximum total signal power added to spawned horde population scaling from elapsed time.")
+      gettext("Maximum bonus that can be added to spawned horde size scaling from time-based growth.")
     )
     menu:add_w_desc(
       9,
@@ -883,15 +883,15 @@ mod.configure_interval = function()
         gettext("Spawned hordes/tick: %d"),
         mod.sanitize_spawned_hordes_per_tick(storage.spawned_hordes_per_tick)
       ),
-      gettext("How many monster hordes are created around you on each Blood Moon horde pulse.")
+      gettext("How many new hordes are spawned around you each time a spawn pulse triggers.")
     )
     menu:add_w_desc(
       10,
       string.format(
-        gettext("Population/signal: %d"),
+        gettext("Population/strength: %d"),
         mod.sanitize_population_per_signal(storage.population_per_signal)
       ),
-      gettext("Population created for each spawned horde per point of current spawn signal power.")
+      gettext("How many zombies each point of current spawn signal strength adds to every spawned horde.")
     )
     menu:add_w_desc(
       11,
@@ -899,7 +899,7 @@ mod.configure_interval = function()
         gettext("Spawn pulse interval: %d"),
         mod.sanitize_spawn_pulse_interval(storage.spawn_pulse_interval)
       ),
-      gettext("How many Blood Moon horde pulses pass between spawning new hordes around the player.")
+      gettext("How many accelerated horde pulses pass between new horde spawns.  1 means every pulse.")
     )
     menu:add_w_desc(
       12,
@@ -907,7 +907,7 @@ mod.configure_interval = function()
         gettext("Spawn group: %s"),
         mod.sanitize_group_id(storage.group_id)
       ),
-      gettext("Monster group id used for newly spawned Blood Moon hordes, such as GROUP_ZOMBIE.")
+      gettext("Monster group ID used for newly spawned Blood Moon hordes, such as GROUP_ZOMBIE.")
     )
 
     local choice = menu:query()
@@ -919,7 +919,7 @@ mod.configure_interval = function()
       local interval_days = mod.prompt_setting(
         gettext("Blood Moon interval: "),
         string.format(
-          gettext("Set the Blood Moon interval in days.\nCurrent: %d\nDefault: %d"),
+          gettext("Set how many days pass between Blood Moons.\nCurrent: %d\nDefault: %d"),
           mod.sanitize_interval(storage.interval_days),
           DEFAULT_INTERVAL_DAYS
         )
@@ -932,7 +932,7 @@ mod.configure_interval = function()
       local multiplier = mod.prompt_setting(
         gettext("Blood Moon multiplier: "),
         string.format(
-          gettext("Set the total horde speed multiplier.\nCurrent: %d\nDefault: %d"),
+          gettext("Set how many accelerated horde updates run during a Blood Moon.\nCurrent: %d\nDefault: %d"),
           mod.sanitize_multiplier(storage.multiplier),
           DEFAULT_MULTIPLIER
         )
@@ -943,9 +943,9 @@ mod.configure_interval = function()
       end
     elseif choice == 3 then
       local horde_signal_power = mod.prompt_setting(
-        gettext("Blood Moon horde signal power: "),
+        gettext("Blood Moon horde signal strength: "),
         string.format(
-          gettext("Set the base horde control signal power.\nCurrent: %d\nDefault: %d"),
+          gettext("Set the base attraction strength used to pull overmap hordes toward you.\nCurrent: %d\nDefault: %d"),
           mod.sanitize_signal_power(storage.horde_signal_power),
           DEFAULT_HORDE_SIGNAL_POWER
         )
@@ -954,16 +954,16 @@ mod.configure_interval = function()
         mod.set_horde_signal_power(horde_signal_power)
         ui.popup(
           string.format(
-            gettext("Blood Moon horde signal power set to %d."),
+            gettext("Blood Moon horde signal strength set to %d."),
             storage.horde_signal_power
           )
         )
       end
     elseif choice == 4 then
       local horde_days_per_signal_growth = mod.prompt_setting(
-        gettext("Blood Moon horde days/signal growth: "),
+        gettext("Blood Moon horde growth days: "),
         string.format(
-          gettext("Set how many days it takes horde control signal to gain +1 power.\nCurrent: %d\nDefault: %d"),
+          gettext("Set how many days it takes for horde signal strength to gain +1.\nCurrent: %d\nDefault: %d"),
           mod.sanitize_days_per_signal_growth(storage.horde_days_per_signal_growth),
           DEFAULT_HORDE_DAYS_PER_SIGNAL_GROWTH
         )
@@ -979,9 +979,9 @@ mod.configure_interval = function()
       end
     elseif choice == 5 then
       local horde_max_signal_growth = mod.prompt_setting(
-        gettext("Blood Moon horde max signal growth: "),
+        gettext("Blood Moon horde max growth: "),
         string.format(
-          gettext("Set the maximum total horde control signal growth from elapsed time.\nCurrent: %d\nDefault: %d"),
+          gettext("Set the maximum bonus that elapsed time can add to horde signal strength.\nCurrent: %d\nDefault: %d"),
           mod.sanitize_max_signal_growth(storage.horde_max_signal_growth),
           DEFAULT_HORDE_MAX_SIGNAL_GROWTH
         )
@@ -997,9 +997,9 @@ mod.configure_interval = function()
       end
     elseif choice == 6 then
       local spawn_signal_power = mod.prompt_setting(
-        gettext("Blood Moon spawn signal power: "),
+        gettext("Blood Moon spawn signal strength: "),
         string.format(
-          gettext("Set the base spawn signal power used for population scaling.\nCurrent: %d\nDefault: %d"),
+          gettext("Set the base strength used to scale spawned horde size.  This does not affect horde attraction.\nCurrent: %d\nDefault: %d"),
           mod.sanitize_signal_power(storage.spawn_signal_power),
           DEFAULT_SPAWN_SIGNAL_POWER
         )
@@ -1008,16 +1008,16 @@ mod.configure_interval = function()
         mod.set_spawn_signal_power(spawn_signal_power)
         ui.popup(
           string.format(
-            gettext("Blood Moon spawn signal power set to %d."),
+            gettext("Blood Moon spawn signal strength set to %d."),
             storage.spawn_signal_power
           )
         )
       end
     elseif choice == 7 then
       local spawn_days_per_signal_growth = mod.prompt_setting(
-        gettext("Blood Moon spawn days/signal growth: "),
+        gettext("Blood Moon spawn growth days: "),
         string.format(
-          gettext("Set how many days it takes spawn scaling to gain +1 signal power.\nCurrent: %d\nDefault: %d"),
+          gettext("Set how many days it takes for spawned horde size scaling to gain +1 signal strength.\nCurrent: %d\nDefault: %d"),
           mod.sanitize_days_per_signal_growth(storage.spawn_days_per_signal_growth),
           DEFAULT_SPAWN_DAYS_PER_SIGNAL_GROWTH
         )
@@ -1033,9 +1033,9 @@ mod.configure_interval = function()
       end
     elseif choice == 8 then
       local spawn_max_signal_growth = mod.prompt_setting(
-        gettext("Blood Moon spawn max signal growth: "),
+        gettext("Blood Moon spawn max growth: "),
         string.format(
-          gettext("Set the maximum total spawn signal growth from elapsed time.\nCurrent: %d\nDefault: %d"),
+          gettext("Set the maximum bonus that elapsed time can add to spawned horde size scaling.\nCurrent: %d\nDefault: %d"),
           mod.sanitize_max_signal_growth(storage.spawn_max_signal_growth),
           DEFAULT_SPAWN_MAX_SIGNAL_GROWTH
         )
@@ -1053,7 +1053,7 @@ mod.configure_interval = function()
       local spawned_hordes_per_tick = mod.prompt_setting(
         gettext("Blood Moon spawned hordes/tick: "),
         string.format(
-          gettext("Set how many monster hordes are created each Blood Moon horde pulse.\nCurrent: %d\nDefault: %d"),
+          gettext("Set how many new hordes are spawned each time a spawn pulse triggers.\nCurrent: %d\nDefault: %d"),
           mod.sanitize_spawned_hordes_per_tick(storage.spawned_hordes_per_tick),
           DEFAULT_SPAWNED_HORDES_PER_TICK
         )
@@ -1069,9 +1069,9 @@ mod.configure_interval = function()
       end
     elseif choice == 10 then
       local population_per_signal = mod.prompt_setting(
-        gettext("Blood Moon population/signal: "),
+        gettext("Blood Moon population/strength: "),
         string.format(
-          gettext("Set the spawned horde population gained per point of current spawn signal power.\nCurrent: %d\nDefault: %d"),
+          gettext("Set how many zombies each point of current spawn signal strength adds to every spawned horde.\nCurrent: %d\nDefault: %d"),
           mod.sanitize_population_per_signal(storage.population_per_signal),
           DEFAULT_POPULATION_PER_SIGNAL
         )
@@ -1089,7 +1089,7 @@ mod.configure_interval = function()
       local spawn_pulse_interval = mod.prompt_setting(
         gettext("Blood Moon spawn pulse interval: "),
         string.format(
-          gettext("Set how many Blood Moon horde pulses pass between new horde spawns.\nCurrent: %d\nDefault: %d"),
+          gettext("Set how many accelerated horde pulses pass between new horde spawns.  1 means every pulse.\nCurrent: %d\nDefault: %d"),
           mod.sanitize_spawn_pulse_interval(storage.spawn_pulse_interval),
           DEFAULT_SPAWN_PULSE_INTERVAL
         )
@@ -1107,7 +1107,7 @@ mod.configure_interval = function()
       local group_id = mod.prompt_string_setting(
         gettext("Blood Moon spawn group: "),
         string.format(
-          gettext("Set the monster group id used for spawned Blood Moon hordes.\nCurrent: %s\nDefault: %s"),
+          gettext("Set the monster group ID used for newly spawned Blood Moon hordes.\nCurrent: %s\nDefault: %s"),
           mod.sanitize_group_id(storage.group_id),
           HORDE_GROUP_ID
         )
