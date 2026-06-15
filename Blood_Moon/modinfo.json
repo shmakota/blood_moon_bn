@@ -1,0 +1,12 @@
+[
+  {
+    "type": "MOD_INFO",
+    "id": "blood_moon",
+    "name": "Blood Moon",
+    "authors": ["Kota"],
+    "description": "Adds configurable blood moon nights that spawn zombie hordes at certain intervals.",
+    "category": "rebalance",
+    "lua_api_version": 2,
+    "dependencies": ["bn"]
+  }
+]
