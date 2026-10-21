@@ -1,0 +1,83 @@
+---@class BloodMoonSignalGrowthOptions
+---@field base_signal_power integer?
+---@field days_per_signal_growth integer?
+---@field max_signal_growth integer?
+
+---@class BloodMoonStorage
+---@field start_day integer?
+---@field last_warned_start_turn integer?
+---@field interval_days integer?
+---@field multiplier integer?
+---@field horde_signal_power integer?
+---@field horde_days_per_signal_growth integer?
+---@field horde_max_signal_growth integer?
+---@field spawn_signal_power integer?
+---@field spawn_days_per_signal_growth integer?
+---@field spawn_max_signal_growth integer?
+---@field spawned_hordes_per_tick integer?
+---@field population_per_signal integer?
+---@field spawn_pulse_interval integer?
+---@field group_id string?
+
+---@class ModBloodMoon
+---@field active boolean?
+---@field announce_transition fun()
+---@field warn_upcoming_blood_moon fun()
+---@field blood_moon_day_number fun(turn: TimePoint): integer
+---@field blood_moon_countdown_text fun(): string
+---@field use_blood_moon_clock fun(params: ItemUseParams): integer
+---@field configure_interval fun()
+---@field current_horde_signal_power fun(turn: TimePoint): integer
+---@field current_signal_power fun(turn: TimePoint): integer
+---@field current_spawn_signal_power fun(turn: TimePoint): integer
+---@field current_scaled_signal_power fun(turn: TimePoint, options: BloodMoonSignalGrowthOptions): integer
+---@field is_blood_moon_night fun(turn: TimePoint): boolean
+---@field surface_omt fun(pos: TripointAbsOmt): TripointAbsOmt
+---@field surface_sm fun(pos: TripointAbsSm): TripointAbsSm
+---@field next_blood_moon_start_turn fun(): TimePoint
+---@field next_blood_moon_horde_turn fun(): TimePoint
+---@field next_horde_preview_text fun(): string
+---@field on_monster_loaded fun(params: { monster: Monster })
+---@field on_monster_spawn fun(params: { monster: Monster })
+---@field on_monster_try_move fun(params: { monster: Monster, from: TripointBubMs, to: TripointBubMs, force: boolean })
+---@field on_game_load fun()
+---@field on_game_started fun()
+---@field on_horde_tick fun(): boolean?
+---@field on_tracking_tick fun(): boolean?
+---@field random_message fun(messages: string[]): string
+---@field prompt_setting fun(title: string, description: string): integer?
+---@field prompt_string_setting fun(title: string, description: string): string?
+---@field refresh_blood_moon_hordes fun(avatar_sm: TripointAbsSm)
+---@field steer_zombie_toward_player fun(monster: Monster, avatar_pos: TripointBubMs)
+---@field is_blood_moon_zombie fun(monster: Monster): boolean
+---@field sanitize_days_per_signal_growth fun(value: integer?): integer
+---@field sanitize_group_id fun(value: string?): string
+---@field sanitize_interval fun(value: integer?): integer
+---@field sanitize_max_signal_growth fun(value: integer?): integer
+---@field sanitize_multiplier fun(value: integer?): integer
+---@field sanitize_population_per_signal fun(value: integer?): integer
+---@field sanitize_signal_power fun(value: integer?): integer
+---@field sanitize_spawn_pulse_interval fun(value: integer?): integer
+---@field sanitize_spawned_hordes_per_tick fun(value: integer?): integer
+---@field set_horde_signal_power fun(value: integer)
+---@field set_horde_days_per_signal_growth fun(value: integer)
+---@field set_horde_max_signal_growth fun(value: integer)
+---@field set_spawn_signal_power fun(value: integer)
+---@field set_spawn_days_per_signal_growth fun(value: integer)
+---@field set_spawn_max_signal_growth fun(value: integer)
+---@field set_population_per_signal fun(value: integer)
+---@field set_group_id fun(value: string)
+---@field set_interval fun(value: integer)
+---@field set_multiplier fun(value: integer)
+---@field set_spawn_pulse_interval fun(value: integer)
+---@field set_spawned_hordes_per_tick fun(value: integer)
+---@field spawn_horde_population fun(turn: TimePoint): integer
+---@field spawn_hordes_around_player fun(turn: TimePoint)
+---@field min_spawn_distance_omt fun(): integer
+---@field max_spawn_distance_omt fun(): integer
+---@field random_horde_spawn_offset fun(): TripointRelOmt
+---@field count_turn_multiples_between fun(start_turn: TimePoint, end_turn: TimePoint, interval_turns: integer): integer
+---@field blood_moon_evening_start_turn fun(turn: TimePoint): TimePoint
+---@field should_spawn_hordes fun(turn: TimePoint): boolean
+---@field night_spawn_estimate_text fun(start_turn: TimePoint): string
+---@field sync_active_state fun()

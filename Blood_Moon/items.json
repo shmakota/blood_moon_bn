@@ -1,0 +1,12 @@
+[
+  {
+    "type": "GENERIC",
+    "id": "blood_moon_clock",
+    "copy-from": "clock",
+    "name": { "str": "blood moon clock" },
+    "description": "A mechanical clock with blood worked into its face.  Its hands count down to the next Blood Moon.  Activate it to read the time remaining.",
+    "color": "red",
+    "looks_like": "clock",
+    "use_action": "BLOOD_MOON_CLOCK"
+  }
+]

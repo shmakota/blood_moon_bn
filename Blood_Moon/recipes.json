@@ -1,0 +1,13 @@
+[
+  {
+    "type": "recipe",
+    "result": "blood_moon_clock",
+    "category": "CC_ELECTRONIC",
+    "subcategory": "CSC_ELECTRONIC_TOOLS",
+    "skill_used": "fabrication",
+    "difficulty": 1,
+    "time": "10 m",
+    "autolearn": true,
+    "components": [ [ [ "clock", 1 ], [ "alarmclock", 1 ] ], [ [ "blood", 1 ] ] ]
+  }
+]
