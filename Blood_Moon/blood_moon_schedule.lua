@@ -1,4 +1,5 @@
 local constants = require("./blood_moon_constants")
+local presets = require("./blood_moon_presets")
 local gettext = locale.gettext
 local schedule = {}
 
@@ -177,6 +178,7 @@ schedule.register = function(mod, storage)
   mod.sync_active_state = function() mod.active = mod.is_blood_moon_night(gapi.current_turn()) end
 
   mod.on_game_started = function()
+    presets.show_select_preset()
     storage.start_day = (gapi.current_turn() - gapi.turn_zero()):to_days()
     mod.sync_active_state()
     mod.warn_upcoming_blood_moon()

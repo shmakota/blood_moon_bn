@@ -81,3 +81,19 @@
 ---@field should_spawn_hordes fun(turn: TimePoint): boolean
 ---@field night_spawn_estimate_text fun(start_turn: TimePoint): string
 ---@field sync_active_state fun()
+
+---@class BMPreset
+---@field name string
+---@field desc string
+---@field horde_signal_power integer
+---@field horde_days_per_signal_growth integer
+---@field horde_max_signal_growth integer
+---@field spawn_signal_power integer
+---@field spawn_days_per_signal_growth integer
+---@field spawn_max_signal_growth integer
+---@field population_per_signal integer
+---@field group_id string
+---@field interval integer
+---@field multiplier integer
+---@field spawn_pulse_interval integer
+---@field spawned_hordes_per_tick integer
